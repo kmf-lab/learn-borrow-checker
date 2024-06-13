@@ -1,42 +1,28 @@
 
+/******************************************/
+/* Lesson 3: Borrow Checking in Rust      */
+/******************************************/
 
-/*
-Lesson 3: Borrow Checking in Rust
+/// Rust's borrow checker is what makes it stand out among modern programming languages.
+/// By strictly enforcing ownership and borrowing rules, Rust guarantees memory safety
+/// without a garbage collector. This means developers can write high-performance,
+/// concurrent applications with confidence. In this lesson, we will explore the intricacies
+/// of borrowing, mutable and immutable references, and the common pitfalls you may encounter.
+/// Mastering these concepts is essential for writing efficient and safe Rust code.
 
-Introduction:
-In this lesson, we will focus on Rust's borrow checking mechanism. Borrowing allows a variable
- to temporarily use a resource without taking ownership, ensuring safe memory management and
-  preventing data races. We will start with simple examples and progressively move to more
-   complex ones, leveraging our understanding of scope, Copy, Clone, and Drop traits from previous lessons.
+/********************/
+/*   Vocabulary     */
+/********************/
 
-Vocabulary:
-Borrow, Borrowed, Borrowing: The concept of a variable temporarily using a resource without taking ownership.
-Reference: A pointer to a value that does not own the value.
-Mutable Reference: A reference to a value that allows mutation.
-Immutable Reference: A reference to a value that does not allow mutation.
-
-Suggestions: Add more examples that show common borrowing mistakes and how to resolve them. Encourage students to experiment with mutable and immutable references to understand the compiler's error messages better.
- */
+/// Borrow, Borrowed, Borrowing: The concept of a variable temporarily using a resource
+///                               without taking ownership.
+/// Reference:                   A pointer to a value that does not own the value.
+/// Mutable Reference:           A reference to a value that allows mutation.
+/// Immutable Reference:         A reference to a value that does not allow mutation.
 
 /////////////////////////////////////////////////////////
 // lesson 3 borrow checking in Rust
 /////////////////////////////////////////////////////////
-
-#[derive(Debug, Clone)]
-struct MyCloneableStruct {
-    data: String,
-}
-
-#[derive(Debug, Copy, Clone)]
-struct MyCopyableStruct {
-    data: i32,
-}
-
-impl Drop for MyCloneableStruct {
-    fn drop(&mut self) {
-        println!("Dropping MyCloneableStruct with data: {}", self.data);
-    }
-}
 
 pub(crate) fn examples() {
     // Immutable References
@@ -95,6 +81,16 @@ pub(crate) fn examples() {
     }
 
     // Using Clone with Borrowing
+
+    #[derive(Debug, Clone)]
+    struct MyCloneableStruct {
+        data: String,
+    }
+    impl Drop for MyCloneableStruct {
+        fn drop(&mut self) {
+            println!("Dropping MyCloneableStruct with data: {}", self.data);
+        }
+    }
     {
         let original = MyCloneableStruct { data: String::from("Hello") };
         let borrowed = &original;
@@ -105,6 +101,11 @@ pub(crate) fn examples() {
     }
 
     // Using Copy with Borrowing
+
+    #[derive(Debug, Copy, Clone)]
+    struct MyCopyableStruct {
+        data: i32,
+    }
     {
         let original = MyCopyableStruct { data: 42 };
         let borrowed = &original;
@@ -120,5 +121,40 @@ pub(crate) fn examples() {
         let reference = &data;
         println!("reference: {:?}", reference);
         // data will be dropped here, but only after reference goes out of scope
+    }
+
+    // Function demonstrating borrowing
+    fn print_data(data: &String) {
+        println!("Data: {}", data);
+    }
+    pub(crate) fn borrowing_with_functions() {
+        let data = String::from("Hello, Rust!");
+        print_data(&data); // Borrowing data immutably
+        println!("After function call: {}", data);
+    }
+
+    // Function demonstrating mutable borrowing
+    fn append_data(data: &mut String) {
+        data.push_str(", Rust!");
+    }
+
+    pub(crate) fn mutable_borrowing_with_functions() {
+        let mut data = String::from("Hello");
+        append_data(&mut data); // Borrowing data mutably
+        println!("After function call: {}", data);
+    }
+
+    use std::thread;
+
+    pub(crate) fn data_race_example() {
+        let data = String::from("Hello");
+        let reference1 = &data;
+        // Uncommenting the next lines will cause a compilation error
+        // let handle = thread::spawn(move || {
+        //     let reference2 = &data;
+        //     println!("Thread reference: {}", reference2);
+        // });
+        // handle.join().unwrap();
+        println!("Main thread reference: {}", reference1);
     }
 }

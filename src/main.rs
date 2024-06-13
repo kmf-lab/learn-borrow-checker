@@ -1,19 +1,8 @@
-mod example_data;
+
 mod lesson_1_scope;
 mod lesson_2_drop_cc;
 mod lesson_3_borrow;
 mod lesson_4_bonus;
-
-///////////////////////////////////////
-use std::collections::VecDeque;
-use crate::example_data::*;
-
-pub fn consume(_data:Vec<i32>) {
-
-}
-pub fn pass_thru(data:Vec<i32>) -> Vec<i32> {
-    data
-}
 
 
 fn main() {
@@ -76,8 +65,6 @@ If any field implements Drop, the compiler ensures that the drop method is calle
 #[cfg(test)]
 
 mod borrow_lessons {
-    use super::*;
-
     #[test]
     fn test_1() {
         let input = vec![1, 2, 3, 4, 5];

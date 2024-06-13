@@ -1,21 +1,35 @@
 
+/*************************************************************/
+/* Lesson 4: Advanced Borrowing and Reference Traits in Rust */
+/*************************************************************/
+
+/// In this lesson, we will delve into advanced concepts related to borrowing and references in Rust.
+/// We'll explore traits such as AsRef, AsMut, Deref, and DerefMut, which provide powerful ways to
+/// work with references in a flexible and idiomatic manner. We'll also introduce smart pointers like
+/// Ref and RefMut from the RefCell type, enabling interior mutability and dynamic borrow checking.
+/// Additionally, we'll cover the Self keyword and lifetime specifiers ('a), which are essential for
+/// writing generic and reusable Rust code. Understanding these advanced borrowing and reference traits
+/// will equip you with the skills to write more efficient, safe, and idiomatic Rust programs.
+
+/********************/
+/*   Vocabulary     */
+/********************/
+
+/// Self:     A keyword that refers to the current type or instance of a type.
+/// 'a:       A lifetime specifier that indicates the lifetime of a reference.
+/// AsRef:    A trait that allows for cheap reference-to-reference conversions.
+/// AsMut:    A trait that allows for cheap mutable reference-to-mutable reference conversions.
+/// Deref:    A trait that allows for implicit dereferencing of a value.
+/// DerefMut: A trait that allows for implicit mutable dereferencing of a value.
+/// Ref:      A smart pointer to a value that is borrowed.
+/// RefMut:   A smart pointer to a value that is mutably borrowed.
+///
+///
 
 /*
-Lesson 4: Advanced Borrowing and Reference Traits in Rust
-Introduction
-In this lesson, we will explore advanced concepts related to borrowing and references in Rust. We'll cover traits like AsRef, AsMut, Deref, and DerefMut, and introduce smart pointers Ref and RefMut. Additionally, we'll touch on the Self keyword and lifetime specifiers ('a). Understanding these advanced concepts will help you write more efficient and idiomatic Rust code.
-
-Vocabulary:
-Self: A keyword that refers to the current type or instance of a type.
-'a: A lifetime specifier that indicates the lifetime of a reference.
-AsRef: A trait that allows for cheap reference-to-reference conversions.
-AsMut: A trait that allows for cheap mutable reference-to-mutable reference conversions.
-Deref: A trait that allows for implicit dereferencing of a value.
-DerefMut: A trait that allows for implicit mutable dereferencing of a value.
-Ref: A smart pointer to a value that is borrowed.
-RefMut: A smart pointer to a value that is mutably borrowed.
-
-Suggestions: This lesson might be challenging for beginners. It’s important to ensure that students are comfortable with the earlier concepts before diving into this lesson. Consider making this an optional advanced topic for those who are ready.
+Suggestions: This lesson might be challenging for beginners. It’s important to ensure
+that students are comfortable with the earlier concepts before diving into this lesson.
+Consider making this an optional advanced topic for those who are ready.
  */
 
 /////////////////////////////////////////////////////////

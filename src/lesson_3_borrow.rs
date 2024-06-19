@@ -1,4 +1,3 @@
-
 /******************************************/
 /* Lesson 3: Borrow Checking in Rust      */
 /******************************************/
@@ -19,13 +18,17 @@
 /// Reference:                   A pointer to a value that does not own the value.
 /// Mutable Reference:           A reference to a value that allows mutation.
 /// Immutable Reference:         A reference to a value that does not allow mutation.
+/// Box:                         A heap-allocated pointer type that provides ownership
+///                              and moves values off the stack.
 
 /////////////////////////////////////////////////////////
 // lesson 3 borrow checking in Rust
 /////////////////////////////////////////////////////////
 
 pub(crate) fn examples() {
-    // Immutable References
+
+    // 1) Immutable References
+    println!(" --------------- lesson 3 example 1 ---------------");
     {
         let data = String::from("Hello, Rust!");
         let reference1 = &data;
@@ -36,7 +39,10 @@ pub(crate) fn examples() {
         println!("data: {}", data);
     }
 
-    // Mutable References
+
+
+    // 2) Mutable References
+    println!(" --------------- lesson 3 example 2 ---------------");
     {
         let mut data = String::from("Hello");
         let reference = &mut data;
@@ -45,30 +51,27 @@ pub(crate) fn examples() {
         // data cannot be used here directly as it's borrowed mutably
     }
 
-    // Problem with Mutable and Immutable References Together
+
+
+    // 3) Problem with Mutable and Immutable References Together
+    println!(" --------------- lesson 3 example 3 ---------------");
     {
         let mut data = String::from("Hello");
+        data.push_str(" World");
         let reference1 = &data;
         let reference2 = &data;
+        // data.push_str(" World"); // Uncommenting this line will cause a compilation error
         // let reference3 = &mut data; // Uncommenting this line will cause a compilation error
+        // reference3.push_str(", Rust!");
         println!("reference1: {}", reference1);
         println!("reference2: {}", reference2);
         // println!("reference3: {}", reference3); // reference3 cannot coexist with reference1 and reference2
     }
 
-    // Demonstrating the Problem
-    {
-        let mut data = String::from("Hello");
-        let reference1 = &data;
-        // println!("Trying to modify data while immutable reference is held");
-        // Uncommenting the next lines will cause a compilation error
-        // let reference2 = &mut data;
-        // reference2.push_str(", Rust!");
-        // println!("reference2: {}", reference2);
-        println!("reference1: {}", reference1); // reference1 still in scope
-    }
 
-    // Using Scopes for References
+
+    // 4) Using Scopes for References
+    println!(" --------------- lesson 3 example 4 ---------------");
     {
         let mut data = String::from("Hello");
         {
@@ -80,8 +83,10 @@ pub(crate) fn examples() {
         println!("reference2: {}", reference2);
     }
 
-    // Using Clone with Borrowing
 
+
+    // 5) Using Clone with Borrowing
+    println!(" --------------- lesson 3 example 5 ---------------");
     #[derive(Debug, Clone)]
     struct MyCloneableStruct {
         data: String,
@@ -98,63 +103,94 @@ pub(crate) fn examples() {
         println!("original: {:?}", original);
         println!("borrowed: {:?}", borrowed);
         println!("cloned: {:?}", cloned);
+        //note that we have 2 drops here, one for the original and one for the cloned
     }
 
-    // Using Copy with Borrowing
 
+
+    // 6) Using Copy with Borrowing
+    println!(" --------------- lesson 3 example 6 ---------------");
     #[derive(Debug, Copy, Clone)]
     struct MyCopyableStruct {
-        data: i32,
+        my_number: i32,
     }
+    // impl Drop for MyCopyableStruct { //NOTE this is a compile error, can not be both copy and drop.
+    //     fn drop(&mut self) {
+    //         println!("Dropping MyCloneableStruct with data: {}", self.data);
+    //     }
+    // }
     {
-        let original = MyCopyableStruct { data: 42 };
+        let original = MyCopyableStruct { my_number: 42 };
         let borrowed = &original;
         let copied = original; // original can still be used because it's copied, not moved
-        println!("original: {:?}", original);
-        println!("borrowed: {:?}", borrowed);
-        println!("copied: {:?}", copied);
+        println!("original: {:?}", original.my_number);
+        println!("borrowed: {:?}", borrowed.my_number);
+        println!("copied: {:?}", copied.my_number);
     }
 
-    // Using Drop with Borrowing
+
+
+    // 7) Using Box to Move Data to the Heap
+    println!(" --------------- lesson 3 example 7 ---------------");
     {
-        let data = MyCloneableStruct { data: String::from("Hello, Rust!") };
+        let data = Box::new(MyCopyableStruct{ my_number: 42 });
         let reference = &data;
         println!("reference: {:?}", reference);
-        // data will be dropped here, but only after reference goes out of scope
+        // Box moves data to the heap, useful for large data structures
     }
 
-    // Function demonstrating borrowing
+
+
+    // 8) Using Box::leak to Extend Lifetime
+    println!(" --------------- lesson 3 example 8 ---------------");
+    {
+        let data = Box::new(MyCloneableStruct { data: String::from("Hello") });
+        let static_ref: &'static mut MyCloneableStruct = Box::leak(data);
+        static_ref.data.push_str(" - Extended Lifetime");
+        println!("static_ref: {:?}", static_ref);
+        //we do not see any drop here as expected.
+    }
+
+
+
+    // 9) Function Demonstrating Borrowing
+    println!(" --------------- lesson 3 example 9 ---------------");
     fn print_data(data: &String) {
         println!("Data: {}", data);
     }
-    pub(crate) fn borrowing_with_functions() {
-        let data = String::from("Hello, Rust!");
-        print_data(&data); // Borrowing data immutably
-        println!("After function call: {}", data);
-    }
+    let data = String::from("Hello, Rust!");
+    print_data(&data); // Borrowing data immutably
+    println!("After function call: {}", data);
 
-    // Function demonstrating mutable borrowing
+
+
+
+    // 10) Function Demonstrating Mutable Borrowing
+    println!(" --------------- lesson 3 example 10 ---------------");
     fn append_data(data: &mut String) {
         data.push_str(", Rust!");
     }
+    let mut data = String::from("Hello");
+    append_data(&mut data); // Borrowing data mutably
+    println!("After function call: {}", data);
 
-    pub(crate) fn mutable_borrowing_with_functions() {
-        let mut data = String::from("Hello");
-        append_data(&mut data); // Borrowing data mutably
-        println!("After function call: {}", data);
-    }
 
-    use std::thread;
 
-    pub(crate) fn data_race_example() {
-        let data = String::from("Hello");
-        let reference1 = &data;
-        // Uncommenting the next lines will cause a compilation error
-        // let handle = thread::spawn(move || {
-        //     let reference2 = &data;
-        //     println!("Thread reference: {}", reference2);
-        // });
-        // handle.join().unwrap();
-        println!("Main thread reference: {}", reference1);
-    }
+
+    // 11) Demonstrating Data Races
+    println!(" --------------- lesson 3 example 11 ---------------");
+    let data = String::from("Hello");
+    let reference1 = &data; //  possible fix .clone();
+    // Uncommenting the next lines will cause a compilation error
+    //  use std::thread;
+    //  let handle = thread::spawn(move || {
+    //      let reference2 = &data;
+    //      println!("Thread reference: {}", reference2);
+    //  });
+    // handle.join().unwrap();
+    println!("Main thread reference: {}", reference1);
+
 }
+
+
+

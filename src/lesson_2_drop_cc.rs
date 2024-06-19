@@ -21,7 +21,6 @@
 ///          and can be copied bitwise.
 /// Mut:     A keyword used to indicate mutable access to a variable.
 /// Struct:  A keyword used to define a structure.
-///
 
 /*
 
@@ -66,14 +65,20 @@ pub(crate) fn examples() {
         data: String,
     }
 
+
+
     // 1) Immutability by default
+    println!(" --------------- lesson 2 example 1 ---------------");
     {
         let my_struct = SimpleStruct { data: String::from("Immutable data") };
         println!("Immutable struct: {:?}", my_struct);
         // my_struct.data.push_str(" - this would cause an error"); // Uncommenting this line would cause a compilation error
     }
 
+
+
     // 2) Mutability
+    println!(" --------------- lesson 2 example 2 ---------------");
     {
         let mut my_struct = SimpleStruct { data: String::from("Mutable data") };
         println!("Before mutation: {:?}", my_struct);
@@ -81,8 +86,20 @@ pub(crate) fn examples() {
         println!("After mutation: {:?}", my_struct);
     }
 
-    // Drop trait
 
+    /*
+    When a value goes out of scope, Rust checks if the type implements the Drop trait.
+     This check is necessary because if the type has a custom destructor (implemented via the Drop trait), Rust needs to call this destructor before deallocating the memory.
+
+    The Rust compiler (LLVM) optimizes away unnecessary checks. If a type does not implement Drop, Rust will directly deallocate the memory without any additional runtime overhead.
+     For types that do implement Drop, the destructor will be called before deallocation.
+
+    For compound types (like structs and enums), Rust generates code to drop each field in the correct order.
+    If any field implements Drop, the compiler ensures that the drop method is called for those fields.
+     */
+
+    // 3) Drop trait
+    println!(" --------------- lesson 2 example 3 ---------------");
     #[derive(Debug)]
     struct MyStruct {
         data: String,
@@ -98,7 +115,7 @@ pub(crate) fn examples() {
         // my_struct goes out of scope here and Drop will be called
     }
 
-    // 10) Domonstrating file close when it leaves scope
+    // 3.1) Domonstrating file close when it leaves scope
     {
         let file = std::fs::File::open("src/lesson_1_scope.tmp");
         // write a byte to the file
@@ -115,7 +132,7 @@ pub(crate) fn examples() {
 /*
     On the Copy Trait:
 
-        If a type implements the Copy trait, then assignments and function calls involving
+    If a type implements the Copy trait, then assignments and function calls involving
     that type will copy the value rather than moving ownership. This means that after
     an assignment or function call, both the original and the new variable can be used
     independently. This is the pass-by-value behavior you may already be familiar with
@@ -131,7 +148,7 @@ pub(crate) fn examples() {
 
         Types That Cannot Be Copied:
 
-        Types that manage heap memory or other resources usually cannot be copied
+    Types that manage heap memory or other resources usually cannot be copied
     because copying would involve duplicating the resource management, which
     is more complex than a simple bitwise copy.
 
@@ -143,52 +160,61 @@ pub(crate) fn examples() {
     The Copy trait requires that the type also implements the Clone trait:
 
     The reason Copy requires Clone is that Copy is a specific kind of Clone.
-        When a type implements Copy, it can be duplicated (cloned) by a simple
+    When a type implements Copy, it can be duplicated (cloned) by a simple
     bitwise copy. Other, more complex types that implement Clone may require
     memory allocations or other operations that are not suitable for Copy.
 */
 
-    // Copy trait
 
+    // 4) Copy trait
+    println!(" --------------- lesson 2 example 4 ---------------");
     #[derive(Debug, Copy, Clone)]
     struct MyCopyableStruct {
         data: i32,
     }
-
     {
         let original = MyCopyableStruct { data: 42 };
         let copied = original; // Copies the value bitwise
-        println!("Original: {:?}", original);
-        println!("Copied: {:?}", copied);
+        println!("Original: {:?}", original.data);
+        println!("Copied: {:?}", copied.data);
+    }
+    {
+        let s1 = 42;
+        let s2 = s1; // s1 is copied to s2
+        println!("{}", s2);
+        println!("{}", s1);
     }
 
+
+    // 5) Clone trait
+    println!(" --------------- lesson 2 example 5 ---------------");
     #[derive(Debug, Clone)]
     struct MyCloneableStruct {
         data: String,
     }
-
-    // Clone trait
     {
         let original = MyCloneableStruct { data: String::from("Clone me!") };
         let cloned = original.clone(); // Creates a deep copy
-        println!("Original: {:?}", original);
-        println!("Cloned: {:?}", cloned);
+        println!("Original: {:?}", original.data);
+        println!("Cloned: {:?}", cloned.data);
     }
+    let s1 = String::from("hello");
+    let s2 = s1; // s1 is moved to s2 vs copy in this case.
+    println!("{}", s2);
+    //println!("{}", s1); // This line would cause a compile-time error because s1 is no longer valid
 
 
-    // Demonstrate what happens if we add a non-Copyable field
-    #[derive(Debug, Clone)]
-    struct NonCopyableStruct {
-        data: String,
-    }
-
+    // 6) Demonstrate what happens if we add a non-Copyable field
+    println!(" --------------- lesson 2 example 6 ---------------");
     // Uncommenting the following line will cause a compile-time error
     // #[derive(Debug, Copy, Clone)]
     // struct InvalidCopyStruct {
-    //     non_copyable_data: NonCopyableStruct,
+    //     non_copyable_data: MyCloneableStruct,
     // }
 
-    // Combining traits with struct
+
+    // 7) Combining traits with struct
+    println!(" --------------- lesson 2 example 7 ---------------");
     #[derive(Debug, Clone, Copy)]
     struct Point {
         x: i32,
@@ -197,8 +223,8 @@ pub(crate) fn examples() {
     {
         let point1 = Point { x: 1, y: 2 };
         let point2 = point1; // Copy trait allows for bitwise copy
-        println!("Point1: {:?}", point1);
-        println!("Point2: {:?}", point2);
+        println!("Point1: {} {}", point1.x, point1.y);
+        println!("Point2: {} {}", point2.x, point2.y);
 
         let mut point3 = Point { x: 3, y: 4 };
         println!("Point3 before mutation: {:?}", point3);
@@ -206,14 +232,16 @@ pub(crate) fn examples() {
         println!("Point3 after mutation: {:?}", point3);
     }
 
+   // 8) Performance Implications of Cloning Large Data - on to borrow.
+   println!(" --------------- lesson 2 example 8 ---------------");
+
     use std::time::Instant;
 
     #[derive(Debug, Clone)]
     struct LargeStruct {
         data: Vec<i32>,
     }
-   // x) Performance Implications of Cloning Large Data - on to borrow.
-  {
+    {
         let large_data = LargeStruct { data: vec![0; 1_000_000] };
 
         // Measure the time taken to clone the large struct

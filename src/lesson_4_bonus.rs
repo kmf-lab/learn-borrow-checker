@@ -1,6 +1,8 @@
 
 /*************************************************************/
 /* Lesson 4: Advanced Borrowing and Reference Traits in Rust */
+/* Note: lesson 4 and forward are under active development   */
+/*       large reorganizations should be expected            */
 /*************************************************************/
 
 /// In this lesson, we will delve into advanced concepts related to borrowing and references in Rust.
@@ -23,13 +25,11 @@
 /// DerefMut: A trait that allows for implicit mutable dereferencing of a value.
 /// Ref:      A smart pointer to a value that is borrowed.
 /// RefMut:   A smart pointer to a value that is mutably borrowed.
-///
-///
+
 
 /*
 Suggestions: This lesson might be challenging for beginners. It’s important to ensure
-that students are comfortable with the earlier concepts before diving into this lesson.
-Consider making this an optional advanced topic for those who are ready.
+that you are comfortable with the earlier concepts before diving into this lesson.
  */
 
 /////////////////////////////////////////////////////////

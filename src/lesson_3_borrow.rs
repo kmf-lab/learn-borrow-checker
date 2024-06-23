@@ -186,7 +186,7 @@ pub(crate) fn examples() {
 
 
 
-    // 11) Demonstrating Borrowing in Threads
+    // 11) Demonstrating Borrowing in Threads problem
     println!(" --------------- lesson 3 example 11 ---------------");
     let data = String::from("Hello");
     let reference1 = &data; //  possible fix .clone();

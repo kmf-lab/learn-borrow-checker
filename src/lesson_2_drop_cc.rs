@@ -57,7 +57,8 @@ What derived creates does for us:
 // lesson 2 drop, clone, and copy traits
 /////////////////////////////////////////////////////////
 use std::fmt::Debug;
-use std::io::Write;
+        use std::fs::File;
+        use std::io::Write;
 
 // Example function to demonstrate usage
 pub(crate) fn examples() {
@@ -120,9 +121,9 @@ pub(crate) fn examples() {
 
     // 3.1) Domonstrating file close when it leaves scope
     {
-        let file = std::fs::File::open("./src/lesson_2.tmp"); //TODO: fix for write...
+        let file = File::create("./src/lesson_2.tmp"); // Open file for writing, truncating if it exists
 
-        // write a byte to the file
+        // Write a byte to the file
         match file {
             Ok(mut f) => {
                 f.write_all(b"Hello, Rust!").expect("Unable to write to file");
@@ -130,16 +131,17 @@ pub(crate) fn examples() {
             Err(e) => {
                 eprintln!("Error opening file: {:?}", e);
             }
-        } // File is closed here
-    }
+        } // File is closed here when `f` goes out of scope and `drop` is called
+    } // File handle is automatically closed here when `file` goes out of scope
+
 
 /*
     On the Copy Trait:
 
     If a type implements the Copy trait, then assignments and function calls involving
-    that type will copy the value rather than moving ownership. This means that after
+    that type will COPY THE BINARY VALUE RATHER THAN MOVING OWNERSHIP. This means that after
     an assignment or function call, both the original and the new variable can be used
-    independently. This is the pass-by-value behavior you may already be familiar with
+    independently. This is the PASS-BY-VALUE behavior you may already be familiar with
     from other programming languages.
 
         Detailed Explanation
@@ -163,7 +165,7 @@ pub(crate) fn examples() {
 
     The Copy trait requires that the type also implements the Clone trait:
 
-    The reason Copy requires Clone is that Copy is a specific kind of Clone.
+    ** The reason Copy requires Clone is that Copy is a specific kind of Clone.
     When a type implements Copy, it can be duplicated (cloned) by a simple
     bitwise copy. Other, more complex types that implement Clone may require
     memory allocations or other operations that are not suitable for Copy.
@@ -211,8 +213,17 @@ pub(crate) fn examples() {
 
 
 
-    // 6) Demonstrate what happens if we add a non-Copyable field
+    // 6) Demonstrating 'to_owned' method
     println!(" --------------- lesson 2 example 6 ---------------");
+    let my_data_a = vec![1, 2, 3, 4, 5];
+    let my_data_a_owned = my_data_a.to_owned(); // 'Clones' the data, creating a new owned instance
+    println!("my_data_a (original): {:?}", my_data_a);
+    println!("my_data_a_owned (to_owned): {:?}", my_data_a_owned);
+
+
+
+    // 7) Demonstrate what happens if we add a non-Copyable field
+    println!(" --------------- lesson 2 example 7 ---------------");
     // Uncommenting the following line will cause a compile-time error
     // #[derive(Debug, Copy, Clone)]
     // struct InvalidCopyStruct {
@@ -221,8 +232,8 @@ pub(crate) fn examples() {
 
 
 
-    // 7) Combining traits with struct
-    println!(" --------------- lesson 2 example 7 ---------------");
+    // 8) Combining traits with struct
+    println!(" --------------- lesson 2 example 8 ---------------");
     #[derive(Debug, Clone, Copy)]
     struct Point {
         x: i32,
@@ -242,8 +253,8 @@ pub(crate) fn examples() {
 
 
 
-   // 8) Performance Implications of Cloning Large Data - on to borrow.
-   println!(" --------------- lesson 2 example 8 ---------------");
+   // 9) Performance Implications of Cloning Large Data - on to borrow.
+   println!(" --------------- lesson 2 example 9 ---------------");
     use std::time::Instant;
     #[derive(Clone)]
     struct LargeStruct {

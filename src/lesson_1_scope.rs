@@ -15,9 +15,9 @@
 
 /// Own,Owned,Ownership: The concept of a scope owning a resource and being responsible
 ///                      for cleaning it up. The location of the variable holding the resource
-///                      determines the scope.
+///                      up to its last use determines the scope.
 /// Lifetime:            A scope of time during which a variable is valid.
-/// From:                A trait which allows for type conversion from one type to another
+/// From:                A method which allows for type conversion from one type to another
 ///                      by consuming the original variable. Once converted, the original
 ///                      is no longer available.
 /// Into:                A reciprocal of From, used for consuming self to convert into
@@ -27,8 +27,7 @@
 ///                      primitive type casting.
 /// Move:                A keyword used to transfer ownership of a resource to another
 ///                      scope.
-/// Drop:                A trait which allows for custom cleanup code to be run when a
-///                      variable goes out of scope.
+/// Drop:                To clean up and free resources when a resource goes out of scope.
 
 ////////////////////////////////////////////////////////////////
 // lesson 1 ownership and dropping, it's all about the SCOPE!!!
@@ -92,15 +91,24 @@ pub(crate) fn examples() {
     // 6) Using 'Into' trait for type conversion
     println!(" --------------- lesson 1 example 6 ---------------");
     let my_data6 = vec![1, 2, 3, 4, 5]; // Note: 'Into' is auto-generated based on 'From' implementations
-    let both_ends: VecDeque<i32> = my_data6.into(); // Lost ownership, it 'moved'
+     let both_ends: VecDeque<i32> = my_data6.into(); // Lost ownership, it 'moved'
     // Uncommenting the next line will cause a compilation error because my_data5 has been moved
     // println!("data6: {:?}", my_data6);
     println!("both_ends (Into): {:?}", both_ends);
 
 
 
-    // 7) Using 'into_iter' to consume and iterate over the collection
+    // 7) Using `into_boxed_slice` to convert Vec to Box<[T]>
     println!(" --------------- lesson 1 example 7 ---------------");
+    let my_data6_1 = vec![1, 2, 3, 4, 5];
+    let boxed_slice: Box<[i32]> = my_data6_1.into_boxed_slice(); // Lost ownership
+    // Uncommenting the next line will cause a compilation error because my_data6_1 has been moved
+    // println!("data6_1: {:?}", my_data6_1);
+    println!("boxed_slice: {:?}", boxed_slice);
+
+
+    // 8) Using 'into_iter' to consume and iterate over the collection
+    println!(" --------------- lesson 1 example 8 ---------------");
     let my_data7 = vec![1, 2, 3, 4, 5];
     for item in my_data7.into_iter() { // Lost ownership, it 'moved'
         println!("Iterated item: {:?}", item);
@@ -110,8 +118,8 @@ pub(crate) fn examples() {
 
 
 
-    // 8) Using from_utf8 example of String::from_utf8
-    println!(" --------------- lesson 1 example 8 ---------------");
+    // 9.1) Using from_utf8 example of String::from_utf8
+    println!(" --------------- lesson 1 example 9.1 ---------------");
     let data8 = vec![104, 101, 108, 108, 111]; // ASCII values for "hello"
     let result = String::from_utf8(data8);
     match result {
@@ -120,7 +128,7 @@ pub(crate) fn examples() {
     }
     // println!("{:?}",data8); //error since data8 moved
 
-    // 8.1) Due to practical or historical reason we have exceptions to the rule.
+    // 9.2) Due to practical or historical reason we have exceptions to the rule.
     //    Methods like from_utf16 take a ref and do not consume the original data
     let unicode_values = vec![104, 101, 108, 108, 111]; // Unicode scalar values for "hello"
     let result = String::from_utf16(&unicode_values); //Note: references are covered in following lessons
@@ -132,21 +140,12 @@ pub(crate) fn examples() {
 
 
 
-    // 9) Demonstrating 'as' for type conversion (i32 to i64)
+    // 10) Demonstrating 'as' for type conversion (i32 to i64)
     println!(" --------------- lesson 1 example 9 ---------------");
     let number: i32 = 42;
     let number_as_i64: i64 = number as i64;
     println!("number (i32): {:?}", number);
     println!("number_as_i64 (i64): {:?}", number_as_i64);
-
-
-
-    // 10) Demonstrating 'to_owned' method
-    println!(" --------------- lesson 1 example 10 ---------------");
-    let my_data_a = vec![1, 2, 3, 4, 5];
-    let my_data_a_owned = my_data_a.to_owned(); // 'Clones' the data, creating a new owned instance
-    println!("my_data_a (original): {:?}", my_data_a);
-    println!("my_data_a_owned (to_owned): {:?}", my_data_a_owned);
 
 
 

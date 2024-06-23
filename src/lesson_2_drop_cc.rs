@@ -1,18 +1,17 @@
-
-        /******************************************/
-        /* Lesson 2: Drop, Clone, and Copy Traits */
-        /******************************************/
+/******************************************/
+/* Lesson 2: Drop, Clone, and Copy Traits */
+/******************************************/
 
 /// In this lesson, we delve deeper into Rust's memory management features by exploring
 /// the Drop, Clone, and Copy traits. These traits are fundamental for understanding
 /// how Rust handles resource cleanup, duplication, and efficient value transfers.
 /// We'll also touch on the mut keyword and the definition and usage of structs.
 /// Grasping these concepts is essential for managing resource lifetimes and ensuring
-/// memory safety, which are cornerstones of Rust's design philosophy
+/// memory safety, which are cornerstones of Rust's design philosophy.
 
-        /********************/
-        /*   Vocabulary     */
-        /********************/
+/********************/
+/*   Vocabulary     */
+/********************/
 
 /// Trait:   A set of methods that a type must implement. Traits are similar to interfaces.
 /// Drop:    A trait that allows for custom cleanup code to be run when a resource
@@ -24,10 +23,10 @@
 /// Struct:  A keyword used to define a structure.
 
 /*
+//////////////////////////////////////////////////////////////////////
+// On derived traits:
+//////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
-What derived creates does for us:
-//////////////////////////////////////////////////////////////////////
         // When we do this:
         #[derive(Debug, Clone, Copy)]
         struct Point {
@@ -54,11 +53,11 @@ What derived creates does for us:
  */
 
 /////////////////////////////////////////////////////////
-// lesson 2 drop, clone, and copy traits
+// Lesson 2: Drop, Clone, and Copy Traits
 /////////////////////////////////////////////////////////
 use std::fmt::Debug;
-        use std::fs::File;
-        use std::io::Write;
+use std::fs::File;
+use std::io::Write;
 
 // Example function to demonstrate usage
 pub(crate) fn examples() {
@@ -68,13 +67,15 @@ pub(crate) fn examples() {
         data: String,
     }
 
+
+
     // 1) Immutability by default
     println!(" --------------- lesson 2 example 1 ---------------");
     {
-        //note we created the string from a string literal
+        // Note we created the string from a string literal
         let my_struct = SimpleStruct { data: String::from("Immutable data") };
         println!("Immutable struct: {:?}", my_struct);
-        // my_struct.data.push_str(" - this would cause an error"); // line would cause a error
+        // my_struct.data.push_str(" - this would cause an error"); // This line would cause an error
     }
 
 
@@ -88,19 +89,20 @@ pub(crate) fn examples() {
         println!("After mutation: {:?}", my_struct);
     }
 
-/*
-     on the Drop Trait:
 
-     - When a value goes out of scope, Rust checks if the type implements the Drop trait. If the
-     type has a custom destructor (implemented via the Drop trait), Rust calls this destructor
-     before deallocating the memory.
-     - The Rust compiler (LLVM) optimizes away unnecessary checks. If a type does not implement
-     Drop, Rust will directly deallocate the memory without any additional runtime overhead.
-     - For compound types (like structs and enums), Rust generates code to drop each field in
-     the correct order. If any field implements Drop, the compiler ensures that the drop method
-     is called for those fields.
 
-*/
+    /*
+        On the Drop Trait:
+
+        - When a value goes out of scope, Rust checks if the type implements the Drop trait. If the
+          type has a custom destructor (implemented via the Drop trait), Rust calls this destructor
+          before deallocating the memory.
+        - The Rust compiler (LLVM) optimizes away unnecessary checks. If a type does not implement
+          Drop, Rust will directly deallocate the memory without any additional runtime overhead.
+        - For compound types (like structs and enums), Rust generates code to drop each field in
+          the correct order. If any field implements Drop, the compiler ensures that the drop method
+          is called for those fields.
+    */
 
     // 3) Drop trait
     println!(" --------------- lesson 2 example 3 ---------------");
@@ -119,7 +121,7 @@ pub(crate) fn examples() {
         // my_struct goes out of scope here and Drop will be called
     }
 
-    // 3.1) Domonstrating file close when it leaves scope
+    // 3.1) Demonstrating file close when it leaves scope
     {
         let file = File::create("./src/lesson_2.tmp"); // Open file for writing, truncating if it exists
 
@@ -134,42 +136,39 @@ pub(crate) fn examples() {
         } // File is closed here when `f` goes out of scope and `drop` is called
     } // File handle is automatically closed here when `file` goes out of scope
 
+    /*
+        On the Copy Trait:
 
-/*
-    On the Copy Trait:
+        If a type implements the Copy trait, then assignments and function calls involving
+        that type will COPY THE BINARY VALUE RATHER THAN MOVING OWNERSHIP. This means that after
+        an assignment or function call, both the original and the new variable can be used
+        independently. This is the PASS-BY-VALUE behavior you may already be familiar with
+        from other programming languages.
 
-    If a type implements the Copy trait, then assignments and function calls involving
-    that type will COPY THE BINARY VALUE RATHER THAN MOVING OWNERSHIP. This means that after
-    an assignment or function call, both the original and the new variable can be used
-    independently. This is the PASS-BY-VALUE behavior you may already be familiar with
-    from other programming languages.
+        Detailed Explanation:
 
-        Detailed Explanation
-
-    Types That Can Be Copied:
-
-        * Simple scalar values (integers, floating-point numbers, booleans, characters)
-        * Slice references (e.g., &T)
-        * Types composed entirely of Copy types, like tuples or arrays of Copy types.
+        Types That Can Be Copied:
+            * Simple scalar values (integers, floating-point numbers, booleans, characters)
+            * Slice references (e.g., &T)
+            * Types composed entirely of Copy types, like tuples or arrays of Copy types.
 
         Types That Cannot Be Copied:
-
-    Types that manage heap memory or other resources usually cannot be copied
-    because copying would involve duplicating the resource management, which
-    is more complex than a simple bitwise copy.
+            * Types that manage heap memory or other resources usually cannot be copied
+              because copying would involve duplicating the resource management, which
+              is more complex than a simple bitwise copy.
 
         Examples include:
-        * String
-        * Vec<T>
-        * Types containing non-Copy types
+            * String
+            * Vec<T>
+            * Types containing non-Copy types
 
-    The Copy trait requires that the type also implements the Clone trait:
+        The Copy trait requires that the type also implements the Clone trait:
 
-    ** The reason Copy requires Clone is that Copy is a specific kind of Clone.
-    When a type implements Copy, it can be duplicated (cloned) by a simple
-    bitwise copy. Other, more complex types that implement Clone may require
-    memory allocations or other operations that are not suitable for Copy.
-*/
+        ** The reason Copy requires Clone is that Copy is a specific kind of Clone.
+        When a type implements Copy, it can be duplicated (cloned) by a simple
+        bitwise copy. Other, more complex types that implement Clone may require
+        memory allocations or other operations that are not suitable for Copy.
+    */
 
 
 
@@ -207,9 +206,9 @@ pub(crate) fn examples() {
         println!("Cloned: {:?}", cloned.data);
     }
     let s1 = String::from("hello");
-    let s2 = s1; // s1 is moved to s2 vs copy in this case.
+    let s2 = s1; // s1 is moved to s2
     println!("{}", s2);
-    //println!("{}", s1); // Error cause a compile-time error, s1 is no longer valid
+    // println!("{}", s1); // This line would cause a compile-time error, s1 is no longer valid
 
 
 
@@ -224,7 +223,7 @@ pub(crate) fn examples() {
 
     // 7) Demonstrate what happens if we add a non-Copyable field
     println!(" --------------- lesson 2 example 7 ---------------");
-    // Uncommenting the following line will cause a compile-time error
+    // Uncommenting the following lines will cause a compile-time error
     // #[derive(Debug, Copy, Clone)]
     // struct InvalidCopyStruct {
     //     non_copyable_data: MyCloneableStruct,
@@ -253,8 +252,8 @@ pub(crate) fn examples() {
 
 
 
-   // 9) Performance Implications of Cloning Large Data - on to borrow.
-   println!(" --------------- lesson 2 example 9 ---------------");
+    // 9) Performance Implications of Cloning Large Data
+    println!(" --------------- lesson 2 example 9 ---------------");
     use std::time::Instant;
     #[derive(Clone)]
     struct LargeStruct {
@@ -273,4 +272,3 @@ pub(crate) fn examples() {
         println!("Cloned data length: {}", cloned_data.data.len());
     }
 }
-

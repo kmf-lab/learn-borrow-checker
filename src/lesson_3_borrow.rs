@@ -14,7 +14,7 @@
 /********************/
 
 /// Borrow, Borrowed, Borrowing: The concept of a scope temporarily using a resource
-///                               without taking ownership.
+///                              without taking ownership.
 /// Reference:                   A pointer to a value that does not own the value.
 /// Mutable Reference:           A reference to a value that allows mutation.
 /// Immutable Reference:         A reference to a value that does not allow mutation.
@@ -22,10 +22,12 @@
 ///                              and moves values off the stack.
 
 /////////////////////////////////////////////////////////
-// lesson 3 borrow checking in Rust
+// Lesson 3: Borrow Checking in Rust
 /////////////////////////////////////////////////////////
 
 pub(crate) fn examples() {
+
+
 
     // 1) Immutable References
     println!(" --------------- lesson 3 example 1 ---------------");
@@ -48,12 +50,12 @@ pub(crate) fn examples() {
         let reference = &mut data;
 
         // data cannot be used here directly as it's borrowed mutably
-        //println!("data: {}", data); // Uncommenting this line will cause a compilation error
+        // println!("data: {}", data); // Uncommenting this line will cause a compilation error
 
         reference.push_str(", Rust!");
-        println!("reference: {}", reference); //scope got dropped at last usage of the borrow
+        println!("reference: {}", reference); // Scope ends after last usage of the borrow
 
-        println!("data: {}", data); // Uncommenting this line will cause a compilation error
+        println!("data: {}", data); // Data can be used after the mutable borrow ends
     }
 
 
@@ -71,7 +73,9 @@ pub(crate) fn examples() {
         println!("reference1: {}", reference1);
         println!("reference2: {}", reference2);
         // println!("reference3: {}", reference3); // reference3 cannot coexist with reference1 and reference2
-        let reference4 = &mut data;
+        let reference4 = &mut data; // Mutable borrow after immutable references go out of scope
+        reference4.push_str("!");
+        println!("reference4: {}", reference4);
     }
 
 
@@ -80,7 +84,7 @@ pub(crate) fn examples() {
     println!(" --------------- lesson 3 example 4 ---------------");
     {
         let mut data = String::from("Hello");
-        { //can remove these {
+        {
             let reference1 = &data;
             println!("reference1: {}", reference1);
         } // reference1 goes out of scope here
@@ -109,7 +113,7 @@ pub(crate) fn examples() {
         println!("original: {:?}", original);
         println!("borrowed: {:?}", borrowed);
         println!("cloned: {:?}", cloned);
-        //note that we have 2 drops here, one for the original and one for the cloned
+        // Note that we have two drops here, one for the original and one for the cloned
     }
 
 
@@ -120,9 +124,9 @@ pub(crate) fn examples() {
     struct MyCopyableStruct {
         my_number: i32,
     }
-    // impl Drop for MyCopyableStruct { //NOTE this is a compile error, can not be both copy and drop.
+    // impl Drop for MyCopyableStruct { // This would cause a compile error, as a type cannot implement both Copy and Drop.
     //     fn drop(&mut self) {
-    //         println!("Dropping MyCloneableStruct with data: {}", self.data);
+    //         println!("Dropping MyCopyableStruct with data: {}", self.data);
     //     }
     // }
     {
@@ -139,7 +143,7 @@ pub(crate) fn examples() {
     // 7) Using Box to Move Data to the Heap
     println!(" --------------- lesson 3 example 7 ---------------");
     {
-        let data = Box::new(MyCopyableStruct{ my_number: 42 });
+        let data = Box::new(MyCopyableStruct { my_number: 42 });
         let reference = &data;
         println!("reference: {:?}", reference);
         // Box moves data to the heap, useful for large data structures
@@ -157,7 +161,7 @@ pub(crate) fn examples() {
             static_ref
         };
         println!("static_ref: {:?}", s);
-        //we do not see any drop here as expected.
+        // No drop here as expected, since the data has an extended lifetime
     }
 
 
@@ -173,7 +177,6 @@ pub(crate) fn examples() {
 
 
 
-
     // 10) Function Demonstrating Mutable Borrowing
     println!(" --------------- lesson 3 example 10 ---------------");
     fn append_data(data: &mut String) {
@@ -185,21 +188,18 @@ pub(crate) fn examples() {
 
 
 
-
-    // 11) Demonstrating Borrowing in Threads problem
+    // 11) Demonstrating Borrowing in Threads Problem
     println!(" --------------- lesson 3 example 11 ---------------");
     let data = String::from("Hello");
-    let reference1 = &data; //  possible fix .clone();
+    let reference1 = &data; // Possible fix: .clone();
     // Uncommenting the next lines will cause a compilation error
-    //  use std::thread;
-    //  let handle = thread::spawn(move || {
-    //      let reference2 = &data;
-    //      println!("Thread reference: {}", reference2);
-    //  });
+    // use std::thread;
+    // let handle = thread::spawn(move || {
+    //     let reference2 = &data;
+    //     println!("Thread reference: {}", reference2);
+    // });
     // handle.join().unwrap();
     println!("Main thread reference: {}", reference1);
-
 }
-
 
 

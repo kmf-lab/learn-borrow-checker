@@ -14,7 +14,8 @@
         /*   Vocabulary     */
         /********************/
 
-/// Drop:    A trait that allows for custom cleanup code to be run when a variable
+/// Trait:   A set of methods that a type must implement. Traits are similar to interfaces.
+/// Drop:    A trait that allows for custom cleanup code to be run when a resource
 ///          goes out of scope, similar to Java's finally or dispose methods.
 /// Clone:   A trait that allows for copying a value, providing deep copies when necessary.
 /// Copy:    A trait that allows for copying a value, suitable for types that are simple
@@ -25,9 +26,10 @@
 /*
 
 //////////////////////////////////////////////////////////////////////
-What derived creates for us:
+What derived creates does for us:
 //////////////////////////////////////////////////////////////////////
-        // When we do this: #[derive(Debug, Clone, Copy)]
+        // When we do this:
+        #[derive(Debug, Clone, Copy)]
         struct Point {
             x: i32,
             y: i32,
@@ -65,14 +67,13 @@ pub(crate) fn examples() {
         data: String,
     }
 
-
-
     // 1) Immutability by default
     println!(" --------------- lesson 2 example 1 ---------------");
     {
+        //note we created the string from a string literal
         let my_struct = SimpleStruct { data: String::from("Immutable data") };
         println!("Immutable struct: {:?}", my_struct);
-        // my_struct.data.push_str(" - this would cause an error"); // Uncommenting this line would cause a compilation error
+        // my_struct.data.push_str(" - this would cause an error"); // line would cause a error
     }
 
 
@@ -86,17 +87,19 @@ pub(crate) fn examples() {
         println!("After mutation: {:?}", my_struct);
     }
 
+/*
+     on the Drop Trait:
 
-    /*
-    When a value goes out of scope, Rust checks if the type implements the Drop trait.
-     This check is necessary because if the type has a custom destructor (implemented via the Drop trait), Rust needs to call this destructor before deallocating the memory.
+     - When a value goes out of scope, Rust checks if the type implements the Drop trait. If the
+     type has a custom destructor (implemented via the Drop trait), Rust calls this destructor
+     before deallocating the memory.
+     - The Rust compiler (LLVM) optimizes away unnecessary checks. If a type does not implement
+     Drop, Rust will directly deallocate the memory without any additional runtime overhead.
+     - For compound types (like structs and enums), Rust generates code to drop each field in
+     the correct order. If any field implements Drop, the compiler ensures that the drop method
+     is called for those fields.
 
-    The Rust compiler (LLVM) optimizes away unnecessary checks. If a type does not implement Drop, Rust will directly deallocate the memory without any additional runtime overhead.
-     For types that do implement Drop, the destructor will be called before deallocation.
-
-    For compound types (like structs and enums), Rust generates code to drop each field in the correct order.
-    If any field implements Drop, the compiler ensures that the drop method is called for those fields.
-     */
+*/
 
     // 3) Drop trait
     println!(" --------------- lesson 2 example 3 ---------------");
@@ -117,7 +120,8 @@ pub(crate) fn examples() {
 
     // 3.1) Domonstrating file close when it leaves scope
     {
-        let file = std::fs::File::open("src/lesson_1_scope.tmp");
+        let file = std::fs::File::open("./src/lesson_2.tmp"); //TODO: fix for write...
+
         // write a byte to the file
         match file {
             Ok(mut f) => {
@@ -166,6 +170,7 @@ pub(crate) fn examples() {
 */
 
 
+
     // 4) Copy trait
     println!(" --------------- lesson 2 example 4 ---------------");
     #[derive(Debug, Copy, Clone)]
@@ -186,6 +191,7 @@ pub(crate) fn examples() {
     }
 
 
+
     // 5) Clone trait
     println!(" --------------- lesson 2 example 5 ---------------");
     #[derive(Debug, Clone)]
@@ -201,7 +207,8 @@ pub(crate) fn examples() {
     let s1 = String::from("hello");
     let s2 = s1; // s1 is moved to s2 vs copy in this case.
     println!("{}", s2);
-    //println!("{}", s1); // This line would cause a compile-time error because s1 is no longer valid
+    //println!("{}", s1); // Error cause a compile-time error, s1 is no longer valid
+
 
 
     // 6) Demonstrate what happens if we add a non-Copyable field
@@ -211,6 +218,7 @@ pub(crate) fn examples() {
     // struct InvalidCopyStruct {
     //     non_copyable_data: MyCloneableStruct,
     // }
+
 
 
     // 7) Combining traits with struct
@@ -232,12 +240,12 @@ pub(crate) fn examples() {
         println!("Point3 after mutation: {:?}", point3);
     }
 
+
+
    // 8) Performance Implications of Cloning Large Data - on to borrow.
    println!(" --------------- lesson 2 example 8 ---------------");
-
     use std::time::Instant;
-
-    #[derive(Debug, Clone)]
+    #[derive(Clone)]
     struct LargeStruct {
         data: Vec<i32>,
     }
@@ -248,13 +256,10 @@ pub(crate) fn examples() {
         let start = Instant::now();
         let cloned_data = large_data.clone();
         let duration = start.elapsed();
-
         println!("Time taken to clone: {:?}", duration);
-
         // Demonstrate that cloned_data is a deep copy
         println!("Original data length: {}", large_data.data.len());
         println!("Cloned data length: {}", cloned_data.data.len());
     }
 }
-
 

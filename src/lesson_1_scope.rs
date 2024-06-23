@@ -13,8 +13,9 @@
                     /*   Vocabulary     */
                     /********************/
 
-/// Own,Owned,Ownership: The concept of a variable owning a resource and being responsible
-///                      for cleaning it up.
+/// Own,Owned,Ownership: The concept of a scope owning a resource and being responsible
+///                      for cleaning it up. The location of the variable holding the resource
+///                      determines the scope.
 /// Lifetime:            A scope of time during which a variable is valid.
 /// From:                A trait which allows for type conversion from one type to another
 ///                      by consuming the original variable. Once converted, the original
@@ -24,14 +25,14 @@
 ///                      unavailable after conversion.
 /// As:                  Used for cheap reference-to-reference conversions or explicit
 ///                      primitive type casting.
-/// Move:                A keyword used to transfer ownership of a variable to another
-///                      variable.
+/// Move:                A keyword used to transfer ownership of a resource to another
+///                      scope.
 /// Drop:                A trait which allows for custom cleanup code to be run when a
 ///                      variable goes out of scope.
 
-/////////////////////////////////////////////////////////////
-// lesson 1 ownership and dropping, it's all about the scope
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+// lesson 1 ownership and dropping, it's all about the SCOPE!!!
+////////////////////////////////////////////////////////////////
 use std::collections::VecDeque;
 
 

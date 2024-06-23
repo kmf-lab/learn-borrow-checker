@@ -13,7 +13,7 @@
 /*   Vocabulary     */
 /********************/
 
-/// Borrow, Borrowed, Borrowing: The concept of a variable temporarily using a resource
+/// Borrow, Borrowed, Borrowing: The concept of a scope temporarily using a resource
 ///                               without taking ownership.
 /// Reference:                   A pointer to a value that does not own the value.
 /// Mutable Reference:           A reference to a value that allows mutation.
@@ -35,7 +35,7 @@ pub(crate) fn examples() {
         let reference2 = &data;
         println!("reference1: {}", reference1);
         println!("reference2: {}", reference2);
-        // data can still be used here because it's just borrowed immutably
+        // data can still be read here because it's just borrowed immutably
         println!("data: {}", data);
     }
 
@@ -46,9 +46,14 @@ pub(crate) fn examples() {
     {
         let mut data = String::from("Hello");
         let reference = &mut data;
-        reference.push_str(", Rust!");
-        println!("reference: {}", reference);
+
         // data cannot be used here directly as it's borrowed mutably
+        //println!("data: {}", data); // Uncommenting this line will cause a compilation error
+
+        reference.push_str(", Rust!");
+        println!("reference: {}", reference); //scope got dropped at last usage of the borrow
+
+        println!("data: {}", data); // Uncommenting this line will cause a compilation error
     }
 
 
@@ -66,6 +71,7 @@ pub(crate) fn examples() {
         println!("reference1: {}", reference1);
         println!("reference2: {}", reference2);
         // println!("reference3: {}", reference3); // reference3 cannot coexist with reference1 and reference2
+        let reference4 = &mut data;
     }
 
 
@@ -74,7 +80,7 @@ pub(crate) fn examples() {
     println!(" --------------- lesson 3 example 4 ---------------");
     {
         let mut data = String::from("Hello");
-        {
+        { //can remove these {
             let reference1 = &data;
             println!("reference1: {}", reference1);
         } // reference1 goes out of scope here
@@ -144,10 +150,13 @@ pub(crate) fn examples() {
     // 8) Using Box::leak to Extend Lifetime
     println!(" --------------- lesson 3 example 8 ---------------");
     {
-        let data = Box::new(MyCloneableStruct { data: String::from("Hello") });
-        let static_ref: &'static mut MyCloneableStruct = Box::leak(data);
-        static_ref.data.push_str(" - Extended Lifetime");
-        println!("static_ref: {:?}", static_ref);
+        let s = {
+            let data = Box::new(MyCloneableStruct { data: String::from("Hello") });
+            let static_ref: &'static mut MyCloneableStruct = Box::leak(data);
+            static_ref.data.push_str(" - Extended Lifetime");
+            static_ref
+        };
+        println!("static_ref: {:?}", s);
         //we do not see any drop here as expected.
     }
 
@@ -177,7 +186,7 @@ pub(crate) fn examples() {
 
 
 
-    // 11) Demonstrating Data Races
+    // 11) Demonstrating Borrowing in Threads
     println!(" --------------- lesson 3 example 11 ---------------");
     let data = String::from("Hello");
     let reference1 = &data; //  possible fix .clone();

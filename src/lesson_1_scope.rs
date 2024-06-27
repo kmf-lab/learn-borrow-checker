@@ -43,7 +43,7 @@ pub(crate) fn examples() {
         println!("data1: {:?}", my_data1);
     }
     // Uncommenting the next line will cause a compilation error because my_data1 is out of scope
-    // println!("data1: {:?}", my_data1);
+    //println!("data1: {:?}", my_data1);
 
 
 
@@ -86,8 +86,6 @@ pub(crate) fn examples() {
     // println!("data5: {:?}", my_data5);
     println!("both_ends (From): {:?}", both_ends);
 
-
-
     // 6) Using 'Into' trait for type conversion
     println!(" --------------- lesson 1 example 6 ---------------");
     let my_data6 = vec![1, 2, 3, 4, 5]; // Note: 'Into' is auto-generated based on 'From' implementations
@@ -115,7 +113,7 @@ pub(crate) fn examples() {
         println!("Iterated item: {:?}", item);
     }
     // Uncommenting the next line will cause a compilation error because my_data7 has been moved
-    // println!("data7: {:?}", my_data7);
+    //println!("data7: {:?}", my_data7);
 
 
 

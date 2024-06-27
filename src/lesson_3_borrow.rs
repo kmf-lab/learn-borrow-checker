@@ -15,7 +15,7 @@
 
 /// Borrow, Borrowed, Borrowing: The concept of a scope temporarily using a resource
 ///                              without taking ownership.
-/// Reference:                   A pointer to a value that does not own the value.
+/// Reference:                   A pointer to a resource. Does not own the resource.
 /// Mutable Reference:           A reference to a value that allows mutation.
 /// Immutable Reference:         A reference to a value that does not allow mutation.
 /// Box:                         A heap-allocated pointer type that provides ownership
@@ -56,6 +56,8 @@ pub(crate) fn examples() {
         println!("reference: {}", reference); // Scope ends after last usage of the borrow
 
         println!("data: {}", data); // Data can be used after the mutable borrow ends
+
+        //println!("reference: {}", reference); // Scope ends after last usage of the borrow
     }
 
 
@@ -108,7 +110,7 @@ pub(crate) fn examples() {
     }
     {
         let original = MyCloneableStruct { data: String::from("Hello") };
-        let borrowed = &original;
+        let borrowed = &original;   // what if this is mut?
         let cloned = original.clone(); // original can still be used because it's cloned, not moved
         println!("original: {:?}", original);
         println!("borrowed: {:?}", borrowed);
@@ -130,8 +132,8 @@ pub(crate) fn examples() {
     //     }
     // }
     {
-        let original = MyCopyableStruct { my_number: 42 };
-        let borrowed = &original;
+        let mut original = MyCopyableStruct { my_number: 42 };
+        let borrowed = &original; // what if it is mut?
         let copied = original; // original can still be used because it's copied, not moved
         println!("original: {:?}", original.my_number);
         println!("borrowed: {:?}", borrowed.my_number);

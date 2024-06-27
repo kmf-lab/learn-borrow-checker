@@ -132,7 +132,7 @@ pub(crate) fn examples() {
     //     }
     // }
     {
-        let mut original = MyCopyableStruct { my_number: 42 };
+        let original = MyCopyableStruct { my_number: 42 };
         let borrowed = &original; // what if it is mut?
         let copied = original; // original can still be used because it's copied, not moved
         println!("original: {:?}", original.my_number);

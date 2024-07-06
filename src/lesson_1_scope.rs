@@ -1,6 +1,6 @@
-        /***********************************************************/
-        /* Lesson 1: Ownership and Dropping - It's All About Scope */
-        /***********************************************************/
+/***********************************************************/
+/* Lesson 1: Ownership and Dropping - It's All About Scope */
+/***********************************************************/
 
 /// Rust fundamentally emphasizes scope management, moving beyond traditional
 /// object-oriented (OO) or functional paradigms, though it supports both. The real
@@ -9,9 +9,9 @@
 /// are dropped, who owns what, and the scope of lifetimes, you can unlock
 /// the full potential of Rust. Using scopes is how Rust ensures memory safety guarantees.
 
-        /********************/
-        /*   Vocabulary     */
-        /********************/
+/********************/
+/*   Vocabulary     */
+/********************/
 
 /// Own, Owned, Ownership: The concept of a scope owning a resource and being responsible
 ///                        for cleaning it up. The location of the variable holding the resource
@@ -28,11 +28,9 @@
 /// Move:                  A keyword used to transfer ownership of a resource to another
 ///                        scope.
 /// Drop:                  To clean up and free resources when a resource goes out of scope.
-
 ////////////////////////////////////////////////////////////////
 // Lesson 1: Ownership and Dropping - It's All About the Scope
 ////////////////////////////////////////////////////////////////
-
 use std::collections::VecDeque;
 
 pub(crate) fn examples() {
@@ -45,8 +43,6 @@ pub(crate) fn examples() {
     // Uncommenting the next line will cause a compilation error because my_data1 is out of scope
     //println!("data1: {:?}", my_data1);
 
-
-
     // 2) Passing Ownership
     println!(" --------------- lesson 1 example 2 ---------------");
     let my_data2 = vec![1, 2, 3, 4, 5];
@@ -58,8 +54,6 @@ pub(crate) fn examples() {
     // 2.1) Ownership transfer in a single line
     consume(vec![1, 2, 3, 4, 5]);
 
-
-
     // 3) Ownership transfer with move
     println!(" --------------- lesson 1 example 3 ---------------");
     let s1 = vec![1, 2, 3, 4, 5];
@@ -67,55 +61,46 @@ pub(crate) fn examples() {
     println!("s2: {:?}", s2);
     // println!("s1: {:?}", s1); // moved value: `s1`
 
-
-
     // 4) Reclaiming ownership after passing
     println!(" --------------- lesson 1 example 4 ---------------");
     let my_data4 = vec![1, 2, 3, 4, 5];
     let my_data4 = pass_thru(my_data4); // Lost ownership but regained it
-    // the use of let with the same name is called shadowing
+                                        // the use of let with the same name is called shadowing
     println!("data4: {:?}", my_data4);
-
-
 
     // 5) Using 'From' trait for type conversion
     println!(" --------------- lesson 1 example 5 ---------------");
     let my_data5 = vec![1, 2, 3, 4, 5];
     let both_ends: VecDeque<i32> = VecDeque::from(my_data5); // Lost ownership, it 'moved'
-    // Uncommenting the next line will cause a compilation error because my_data5 has been moved
-    // println!("data5: {:?}", my_data5);
+                                                             // Uncommenting the next line will cause a compilation error because my_data5 has been moved
+                                                             // println!("data5: {:?}", my_data5);
     println!("both_ends (From): {:?}", both_ends);
 
     // 6) Using 'Into' trait for type conversion
     println!(" --------------- lesson 1 example 6 ---------------");
     let my_data6 = vec![1, 2, 3, 4, 5]; // Note: 'Into' is auto-generated based on 'From' implementations
     let both_ends: VecDeque<i32> = my_data6.into(); // Lost ownership, it 'moved'
-    // Uncommenting the next line will cause a compilation error because my_data6 has been moved
-    // println!("data6: {:?}", my_data6);
+                                                    // Uncommenting the next line will cause a compilation error because my_data6 has been moved
+                                                    // println!("data6: {:?}", my_data6);
     println!("both_ends (Into): {:?}", both_ends);
-
-
 
     // 7) Using `into_boxed_slice` to convert Vec to Box<[T]>
     println!(" --------------- lesson 1 example 7 ---------------");
     let my_data6_1 = vec![1, 2, 3, 4, 5];
     let boxed_slice: Box<[i32]> = my_data6_1.into_boxed_slice(); // Lost ownership
-    // Uncommenting the next line will cause a compilation error because my_data6_1 has been moved
-    // println!("data6_1: {:?}", my_data6_1);
+                                                                 // Uncommenting the next line will cause a compilation error because my_data6_1 has been moved
+                                                                 // println!("data6_1: {:?}", my_data6_1);
     println!("boxed_slice: {:?}", boxed_slice);
-
-
 
     // 8) Using 'into_iter' to consume and iterate over the collection
     println!(" --------------- lesson 1 example 8 ---------------");
     let my_data7 = vec![1, 2, 3, 4, 5];
-    for item in my_data7.into_iter() { // Lost ownership, it 'moved'
+    for item in my_data7.into_iter() {
+        // Lost ownership, it 'moved'
         println!("Iterated item: {:?}", item);
     }
     // Uncommenting the next line will cause a compilation error because my_data7 has been moved
     //println!("data7: {:?}", my_data7);
-
-
 
     // 9.1) Using from_utf8 example of String::from_utf8
     println!(" --------------- lesson 1 example 9.1 ---------------");
@@ -137,8 +122,6 @@ pub(crate) fn examples() {
     }
     println!("{:?}", unicode_values); // this is ok, note we did not use the From trait.
 
-
-
     // 10) Demonstrating 'as' for type conversion (i32 to i64)
     println!(" --------------- lesson 1 example 10 ---------------");
     let number: i32 = 42;
@@ -146,16 +129,14 @@ pub(crate) fn examples() {
     println!("number (i32): {:?}", number);
     println!("number_as_i64 (i64): {:?}", number_as_i64);
 
-
-
     // 11) Demonstrating 'Drop' trait
     println!(" --------------- lesson 1 example 11 ---------------");
     {
         let my_data_b = vec![1, 2, 3, 4, 5];
         println!("my_data_b: {:?}", my_data_b);
         drop(my_data_b); // Explicitly dropping, although it would happen at the end of scope anyway
-        // Uncommenting the next line will cause a compilation error because my_data_b has been dropped
-        // println!("my_data_b: {:?}", my_data_b);
+                         // Uncommenting the next line will cause a compilation error because my_data_b has been dropped
+                         // println!("my_data_b: {:?}", my_data_b);
     }
 }
 
@@ -166,4 +147,3 @@ pub fn pass_thru(data: Vec<i32>) -> Vec<i32> {
 
 // Helper method consuming the data
 pub fn consume(_data: Vec<i32>) {}
-

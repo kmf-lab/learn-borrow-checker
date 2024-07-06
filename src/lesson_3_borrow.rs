@@ -26,9 +26,6 @@
 /////////////////////////////////////////////////////////
 
 pub(crate) fn examples() {
-
-
-
     // 1) Immutable References
     println!(" --------------- lesson 3 example 1 ---------------");
     {
@@ -40,8 +37,6 @@ pub(crate) fn examples() {
         // data can still be read here because it's just borrowed immutably
         println!("data: {}", data);
     }
-
-
 
     // 2) Mutable References
     println!(" --------------- lesson 3 example 2 ---------------");
@@ -59,8 +54,6 @@ pub(crate) fn examples() {
 
         //println!("reference: {}", reference); // Scope ends after last usage of the borrow
     }
-
-
 
     // 3) Problem with Mutable and Immutable References Together
     println!(" --------------- lesson 3 example 3 ---------------");
@@ -80,8 +73,6 @@ pub(crate) fn examples() {
         println!("reference4: {}", reference4);
     }
 
-
-
     // 4) Using Scopes for References
     println!(" --------------- lesson 3 example 4 ---------------");
     {
@@ -95,8 +86,6 @@ pub(crate) fn examples() {
         println!("reference2: {}", reference2);
     }
 
-
-
     // 5) Using Clone with Borrowing
     println!(" --------------- lesson 3 example 5 ---------------");
     #[derive(Debug, Clone)]
@@ -109,16 +98,16 @@ pub(crate) fn examples() {
         }
     }
     {
-        let original = MyCloneableStruct { data: String::from("Hello") };
-        let borrowed = &original;   // what if this is mut?
+        let original = MyCloneableStruct {
+            data: String::from("Hello"),
+        };
+        let borrowed = &original; // what if this is mut?
         let cloned = original.clone(); // original can still be used because it's cloned, not moved
         println!("original: {:?}", original);
         println!("borrowed: {:?}", borrowed);
         println!("cloned: {:?}", cloned);
         // Note that we have two drops here, one for the original and one for the cloned
     }
-
-
 
     // 6) Using Copy with Borrowing
     println!(" --------------- lesson 3 example 6 ---------------");
@@ -140,8 +129,6 @@ pub(crate) fn examples() {
         println!("copied: {:?}", copied.my_number);
     }
 
-
-
     // 7) Using Box to Move Data to the Heap
     println!(" --------------- lesson 3 example 7 ---------------");
     {
@@ -151,13 +138,13 @@ pub(crate) fn examples() {
         // Box moves data to the heap, useful for large data structures
     }
 
-
-
     // 8) Using Box::leak to Extend Lifetime
     println!(" --------------- lesson 3 example 8 ---------------");
     {
         let s = {
-            let data = Box::new(MyCloneableStruct { data: String::from("Hello") });
+            let data = Box::new(MyCloneableStruct {
+                data: String::from("Hello"),
+            });
             let static_ref: &'static mut MyCloneableStruct = Box::leak(data);
             static_ref.data.push_str(" - Extended Lifetime");
             static_ref
@@ -165,8 +152,6 @@ pub(crate) fn examples() {
         println!("static_ref: {:?}", s);
         // No drop here as expected, since the data has an extended lifetime
     }
-
-
 
     // 9) Function Demonstrating Borrowing
     println!(" --------------- lesson 3 example 9 ---------------");
@@ -177,8 +162,6 @@ pub(crate) fn examples() {
     print_data(&data); // Borrowing data immutably
     println!("After function call: {}", data);
 
-
-
     // 10) Function Demonstrating Mutable Borrowing
     println!(" --------------- lesson 3 example 10 ---------------");
     fn append_data(data: &mut String) {
@@ -188,20 +171,16 @@ pub(crate) fn examples() {
     append_data(&mut data); // Borrowing data mutably
     println!("After function call: {}", data);
 
-
-
     // 11) Demonstrating Borrowing in Threads Problem
     println!(" --------------- lesson 3 example 11 ---------------");
     let data = String::from("Hello");
     let reference1 = &data; // Possible fix: .clone();
-    // Uncommenting the next lines will cause a compilation error
-    // use std::thread;
-    // let handle = thread::spawn(move || {
-    //     let reference2 = &data;
-    //     println!("Thread reference: {}", reference2);
-    // });
-    // handle.join().unwrap();
+                            // Uncommenting the next lines will cause a compilation error
+                            // use std::thread;
+                            // let handle = thread::spawn(move || {
+                            //     let reference2 = &data;
+                            //     println!("Thread reference: {}", reference2);
+                            // });
+                            // handle.join().unwrap();
     println!("Main thread reference: {}", reference1);
 }
-
-

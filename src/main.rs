@@ -1,4 +1,3 @@
-
 mod lesson_1_scope;
 mod lesson_2_drop_cc;
 mod lesson_3_borrow;
@@ -7,14 +6,11 @@ mod lesson_4_bonus;
 use rand::Rng;
 
 fn main() {
-
     lesson_1_scope::examples();
     lesson_2_drop_cc::examples();
     lesson_3_borrow::examples();
     lesson_4_bonus::examples();
-
 }
-
 
 fn _pick_random(x: u32) -> u32 {
     let mut rng = rand::thread_rng();
@@ -38,9 +34,7 @@ mod tests {
         println!("Min: {}, Max: {}", min, max);
         assert_eq!(1, min);
         assert_eq!(x, max);
-
     }
-
 
     #[test]
     fn test_pick_random() {
@@ -61,8 +55,13 @@ mod tests {
         }
         println!("Second Selected Winner: {}", second_result);
 
-        assert!(first_result >= 1 && first_result <= attendee_count, "Returned value is out of range");
-        assert!(second_result >= 1 && second_result <= attendee_count, "Returned value is out of range");
-
+        assert!(
+            first_result >= 1 && first_result <= attendee_count,
+            "Returned value is out of range"
+        );
+        assert!(
+            second_result >= 1 && second_result <= attendee_count,
+            "Returned value is out of range"
+        );
     }
 }

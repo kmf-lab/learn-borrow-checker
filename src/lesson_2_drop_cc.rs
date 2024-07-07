@@ -21,7 +21,6 @@
 ///          and can be copied bitwise.
 /// Mut:     A keyword used to indicate mutable access to a variable.
 /// Struct:  A keyword used to define a structure.
-
 /*
 //////////////////////////////////////////////////////////////////////
 // On derived traits:
@@ -51,7 +50,6 @@
         impl Copy for Point {}
 
  */
-
 /////////////////////////////////////////////////////////
 // Lesson 2: Drop, Clone, and Copy Traits
 /////////////////////////////////////////////////////////
@@ -61,35 +59,32 @@ use std::io::Write;
 
 // Example function to demonstrate usage
 pub(crate) fn examples() {
-
     #[derive(Debug)]
     struct SimpleStruct {
         data: String,
     }
 
-
-
     // 1) Immutability by default
     println!(" --------------- lesson 2 example 1 ---------------");
     {
         // Note we created the string from a string literal
-        let my_struct = SimpleStruct { data: String::from("Immutable data") };
+        let my_struct = SimpleStruct {
+            data: String::from("Immutable data"),
+        };
         println!("Immutable struct: {:?}", my_struct);
         // my_struct.data.push_str(" - this would cause an error"); // This line would cause an error
     }
 
-
-
     // 2) Mutability
     println!(" --------------- lesson 2 example 2 ---------------");
     {
-        let mut my_struct = SimpleStruct { data: String::from("Mutable data") };
+        let mut my_struct = SimpleStruct {
+            data: String::from("Mutable data"),
+        };
         println!("Before mutation: {:?}", my_struct);
         my_struct.data.push_str(" has been mutated!");
         println!("After mutation: {:?}", my_struct);
     }
-
-
 
     /*
         On the Drop Trait:
@@ -116,7 +111,9 @@ pub(crate) fn examples() {
         }
     }
     {
-        let my_struct = MyStruct { data: String::from("Hello, Rust!") };
+        let my_struct = MyStruct {
+            data: String::from("Hello, Rust!"),
+        };
         println!("Created: {:?}", my_struct);
         // my_struct goes out of scope here and Drop will be called
     }
@@ -128,8 +125,9 @@ pub(crate) fn examples() {
         // Write a byte to the file
         match file {
             Ok(mut f) => {
-                f.write_all(b"Hello, Rust!").expect("Unable to write to file");
-            },
+                f.write_all(b"Hello, Rust!")
+                    .expect("Unable to write to file");
+            }
             Err(e) => {
                 eprintln!("Error opening file: {:?}", e);
             }
@@ -170,8 +168,6 @@ pub(crate) fn examples() {
         memory allocations or other operations that are not suitable for Copy.
     */
 
-
-
     // 4) Copy trait
     println!(" --------------- lesson 2 example 4 ---------------");
     #[derive(Debug, Copy, Clone)]
@@ -191,8 +187,6 @@ pub(crate) fn examples() {
         println!("{}", s1);
     }
 
-
-
     // 5) Clone trait
     println!(" --------------- lesson 2 example 5 ---------------");
     #[derive(Debug, Clone)]
@@ -200,7 +194,9 @@ pub(crate) fn examples() {
         data: String,
     }
     {
-        let original = MyCloneableStruct { data: String::from("Clone me!") };
+        let original = MyCloneableStruct {
+            data: String::from("Clone me!"),
+        };
         let cloned = original.clone(); // Creates a deep copy
         println!("Original: {:?}", original.data);
         println!("Cloned: {:?}", cloned.data);
@@ -210,16 +206,12 @@ pub(crate) fn examples() {
     println!("{}", s2);
     // println!("{}", s1); // This line would cause a compile-time error, s1 is no longer valid
 
-
-
     // 6) Demonstrating 'to_owned' method
     println!(" --------------- lesson 2 example 6 ---------------");
     let my_data_a = vec![1, 2, 3, 4, 5];
     let my_data_a_owned = my_data_a.to_owned(); // 'Clones' the data, creating a new owned instance
     println!("my_data_a (original): {:?}", my_data_a);
     println!("my_data_a_owned (to_owned): {:?}", my_data_a_owned);
-
-
 
     // 7) Demonstrate what happens if we add a non-Copyable field
     println!(" --------------- lesson 2 example 7 ---------------");
@@ -228,8 +220,6 @@ pub(crate) fn examples() {
     // struct InvalidCopyStruct {
     //     non_copyable_data: MyCloneableStruct,
     // }
-
-
 
     // 8) Combining traits with struct
     println!(" --------------- lesson 2 example 8 ---------------");
@@ -250,8 +240,6 @@ pub(crate) fn examples() {
         println!("Point3 after mutation: {:?}", point3);
     }
 
-
-
     // 9) Performance Implications of Cloning Large Data
     println!(" --------------- lesson 2 example 9 ---------------");
     use std::time::Instant;
@@ -260,7 +248,9 @@ pub(crate) fn examples() {
         data: Vec<i32>,
     }
     {
-        let large_data = LargeStruct { data: vec![0; 1_000_000] };
+        let large_data = LargeStruct {
+            data: vec![0; 1_000_000],
+        };
 
         // Measure the time taken to clone the large struct
         let start = Instant::now();

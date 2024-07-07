@@ -1,4 +1,3 @@
-
 /*************************************************************/
 /* Lesson 4: Advanced Borrowing and Reference Traits in Rust */
 /* Note: lesson 4 and forward are under active development   */
@@ -25,18 +24,14 @@
 /// DerefMut: A trait that allows for implicit mutable dereferencing of a value.
 /// Ref:      A smart pointer to a value that is borrowed.
 /// RefMut:   A smart pointer to a value that is mutably borrowed.
-
-
 /*
 Suggestions: This lesson might be challenging for beginners. It’s important to ensure
 that you are comfortable with the earlier concepts before diving into this lesson.
  */
-
 /////////////////////////////////////////////////////////
 // lesson 4 advanced borrowing and reference traits in Rust
 /////////////////////////////////////////////////////////
-
-use std::cell::{RefCell, Ref, RefMut};
+use std::cell::{Ref, RefCell, RefMut};
 use std::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
@@ -113,12 +108,13 @@ pub(crate) fn examples() {
         let data = RefCell::new(String::from("Hello, Rust!"));
 
         // Borrow as immutable
-        { //comment this bracket and see we have no compiler error
+        {
+            //comment this bracket and see we have no compiler error
             let borrowed: Ref<String> = data.borrow();
             println!("Borrowed: {}", borrowed);
         } //comment this bracket and see we have no compiler error
-        // Borrow as mutable ONLY works because our borrow above was dropped.
-        // NOTE this one gets past the compiler because we used RefCell which is checked at runtime.
+          // Borrow as mutable ONLY works because our borrow above was dropped.
+          // NOTE this one gets past the compiler because we used RefCell which is checked at runtime.
         let mut borrowed_mut: RefMut<String> = data.borrow_mut();
         borrowed_mut.push_str(" How are you?");
         println!("Mutably Borrowed: {}", borrowed_mut);
